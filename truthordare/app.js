@@ -6,16 +6,22 @@ var options = {
     ca: fs.readFileSync('/etc/ssl/server.ca.crt')
 };
 
-var quotes = [];
-quotes.push("What personality traits would cause you to end a friendship?");
-quotes.push("Have you ever lied to your best friend?  If so, describe what happened.");
-quotes.push("How long have you gone without showering?");
+var dares = [];
+dares.push("Peel a banana using your feet");
+dares.push("Say the alphabet backwards as fast as you can");
+dares.push("Prank call your Mom.");
 
+var truths = [];
+truths.push("If you were marooned on an island with just a single person, who would you like it to be?");
+truths.push("Would you rather have a pet, or a sibling?");
+truths.push("If you could have anything in the world, what would it be?");
 
-function getRandomQuote() {
-    return quotes[Math.floor(Math.random() * quotes.length)];
+function getRandomDares() {
+    return dares[Math.floor(Math.random() * dares.length)];
 }
-
+function getRandomTruths() {
+    return truths[Math.floor(Math.random() * truths.length)];
+}
 
 https.createServer(options, function(req, res) {
     if (req.method == 'POST') {
@@ -40,13 +46,28 @@ https.createServer(options, function(req, res) {
             console.log('JSON', theRequest.request);
             if (typeof theRequest.request.intent !== 'undefined') {
                 choice = theRequest.request.intent.slots.Choice.value;
-                echoResponse.response.outputSpeech.text = "you said " + choice;
+                if (choice === "dare"){
+                dare = getRandomDares();
+                echoResponse.response.outputSpeech.text = dare;
+                //echoResponse.response.outputSpeech.text = "you said " + choice;
+                 //echoResponse.response.card = {}
+                 //echoResponse.response.card.type = "PlainText";
+                 //echoResponse.response.card.title = "truth or dare";
+                 //echoResponse.response.card.subtitle = choice;
+                 //echoResponse.response.card.content = "dare";
+                echoResponse.response.shouldEndSession = "false";
+            }
+            if (choice === "truth"){
+                truth = getRandomTruths();
+                echoResponse.response.outputSpeech.text = truth;
+                //echoResponse.response.outputSpeech.text = "you said " + choice;
                 // echoResponse.response.card = {}
                 // echoResponse.response.card.type = "PlainText";
                 // echoResponse.response.card.title = choice;
                 // echoResponse.response.card.subtitle = choice;
                 // echoResponse.response.card.content = choice;
-                echoResponse.response.shouldEndSession = "true";
+                echoResponse.response.shouldEndSession = "false";
+            }
 
             }
             myResponse = JSON.stringify(echoResponse);
@@ -62,4 +83,4 @@ https.createServer(options, function(req, res) {
         res.writeHead(200);
         res.end(myResponse);
     }
-}).listen(xxxx); //Put number in the 3000 range for testing and 443 for production
+}).listen(3007); //Put number in the 3000 range for testing and 443 for production
